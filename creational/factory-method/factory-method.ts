@@ -49,11 +49,12 @@ class AuthCreatorByToken extends AuthCreator {
 
   checkFeature(path: string, token: string) {
     // alguma adicional logica aqui
+    console.log("Extendi a implementação");
     return super.checkFeature(path, token);
   }
 }
 
-// Product1
+// ConcreteProduct1
 class AuthorizationByToken implements Authorization {
   getUserFeatures(): Promise<string[]> {
     return getFeaturesByToken();
@@ -73,7 +74,7 @@ class AuthCreatorByApi extends AuthCreator {
   }
 }
 
-// Product2
+// ConcreteProduct2
 class AuthorizationByApi implements Authorization {
   getUserFeatures(): Promise<string[]> {
     return getFeaturesByApi();
@@ -86,8 +87,46 @@ class AuthorizationByApi implements Authorization {
   }
 }
 
+// Product
+interface SomeProduct {
+  operation(authorization: Authorization): void;
+}
+
+// Creator
+abstract class SomeCreator {
+  abstract createSomeProduct(): SomeProduct;
+}
+
+// ConcreteCreator
+class SomeCreatorImpl extends SomeCreator {
+  createSomeProduct() {
+    return new SomeProductImpl();
+  }
+}
+
+// ConcreteProduct
+class SomeProductImpl implements SomeProduct {
+  operation(authorization: Authorization) {
+    authorization.loginRedirect();
+  }
+}
+
+// Código cliente
+
+// Gancho para subclasses, permitindo extender a versão abstrata do criador
 const authByToken = new AuthCreatorByToken();
 authByToken.checkFeature("/", "abc");
 
 const authByApi = new AuthCreatorByApi();
 authByApi.checkFeature("/", "abc");
+
+// Conexão de hierarquia de classes paralelas pelo cliente
+// fazendo a comunicação através de hierarquia de classes paralelas
+const authorizationByToken = authByToken.createAuthorization();
+const authorizationByApi = authByApi.createAuthorization();
+
+const someCreator = new SomeCreatorImpl();
+const someProduct = someCreator.createSomeProduct();
+
+someProduct.operation(authorizationByToken);
+someProduct.operation(authorizationByApi);

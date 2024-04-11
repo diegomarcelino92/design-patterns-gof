@@ -18,8 +18,8 @@ abstract class AuthCreator {
   };
 
   async checkFeature(path: string, token: string) {
-    // criar a intância do Authorization
-    // fornecida pelo ConcreteCreator
+    // Cria a intância do Authorization
+    // que será fornecida pelo ConcreteCreator
     const auth = this.createAuthorization();
 
     const isExpired = auth.isTokenExpired(token);
@@ -48,7 +48,7 @@ class AuthCreatorByToken extends AuthCreator {
   }
 
   checkFeature(path: string, token: string) {
-    // alguma adicional logica aqui
+    // Gancho para subclasses, permitindo extender a versão abstrata do criado
     console.log("Extendi a implementação");
     return super.checkFeature(path, token);
   }
@@ -59,9 +59,11 @@ class AuthorizationByToken implements Authorization {
   getUserFeatures(): Promise<string[]> {
     return getFeaturesByToken();
   }
+
   isTokenExpired(token: string): boolean {
     return false;
   }
+
   loginRedirect(): void {
     console.log("redirecionando para login");
   }
@@ -79,54 +81,83 @@ class AuthorizationByApi implements Authorization {
   getUserFeatures(): Promise<string[]> {
     return getFeaturesByApi();
   }
+
   isTokenExpired(token: string): boolean {
     return true;
   }
+
   loginRedirect(): void {
     console.log("redirecionando para login");
   }
 }
 
 // Product
-interface SomeProduct {
-  operation(authorization: Authorization): void;
+class SomeProduct {
+  operation() {}
 }
 
 // Creator
 abstract class SomeCreator {
-  abstract createSomeProduct(): SomeProduct;
-}
+  createSomeProduct(productId?: number): SomeProduct {
+    // Instância por omissão
+    return new SomeProduct();
+  }
 
-// ConcreteCreator
-class SomeCreatorImpl extends SomeCreator {
-  createSomeProduct() {
-    return new SomeProductImpl();
+  doAnythingWithProduct() {
+    const any = this.getAny();
+    let productId = 0;
+
+    if (any.type === "a") productId = 1;
+    else productId = 2;
+
+    const product = this.createSomeProduct(productId);
+    product.operation();
+  }
+
+  private getAny() {
+    return { type: "a", name: "letter a" };
   }
 }
 
-// ConcreteProduct
-class SomeProductImpl implements SomeProduct {
-  operation(authorization: Authorization) {
-    authorization.loginRedirect();
+// ConcreteCreator1
+class SomeCreatorImpl1 extends SomeCreator {
+  createSomeProduct(productId: number): SomeProduct {
+    if (productId === 1) return new SomeProduct1();
+    if (productId === 2) return new SomeProduct2();
+    return super.createSomeProduct(productId);
   }
 }
 
-// Código cliente
+// ConcreteCreator2
+class SomeCreatorImpl2 extends SomeCreator {
+  doAnythingWithProduct() {
+    const product = this.createSomeProduct();
+    // faça alguma coisa a mais
+    product.operation();
+  }
+}
 
-// Gancho para subclasses, permitindo extender a versão abstrata do criador
+// ConcreteProduct1
+class SomeProduct1 extends SomeProduct {
+  id = 1;
+}
+
+// ConcreteProduct2
+class SomeProduct2 extends SomeProduct {
+  id = 2;
+}
+
+// --------------------------- CLIENT ----------------------------------
+
 const authByToken = new AuthCreatorByToken();
-authByToken.checkFeature("/", "abc");
+authByToken.checkFeature("/", "abc"); // Versão extendida
 
-const authByApi = new AuthCreatorByApi();
+const authByApi = new AuthCreatorByApi(); // Fornece a instância adequada de product
 authByApi.checkFeature("/", "abc");
 
-// Conexão de hierarquia de classes paralelas pelo cliente
-// fazendo a comunicação através de hierarquia de classes paralelas
-const authorizationByToken = authByToken.createAuthorization();
-const authorizationByApi = authByApi.createAuthorization();
+const someCreator1 = new SomeCreatorImpl1();
+const someProduct1 = someCreator1.createSomeProduct(1); // Criador parametrizado
+const someProduct2 = someCreator1.createSomeProduct(2); // Criador parametrizado
 
-const someCreator = new SomeCreatorImpl();
-const someProduct = someCreator.createSomeProduct();
-
-someProduct.operation(authorizationByToken);
-someProduct.operation(authorizationByApi);
+const someCreate2 = new SomeCreatorImpl2(); // Instância de Product por omissão
+someCreate2.doAnythingWithProduct();

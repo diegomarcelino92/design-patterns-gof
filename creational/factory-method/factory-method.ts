@@ -91,6 +91,15 @@ class AuthorizationByApi implements Authorization {
   }
 }
 
+// Client code
+const authByToken = new AuthCreatorByToken();
+authByToken.checkFeature("/", "abc"); // Versão estendida da classe base
+
+const authByApi = new AuthCreatorByApi(); // Fornece a instância adequada de product
+authByApi.checkFeature("/", "abc");
+
+// ==================================================================================
+
 // Product
 class SomeProduct {
   operation() {}
@@ -131,6 +140,7 @@ class SomeCreatorImpl1 extends SomeCreator {
 // ConcreteCreator2
 class SomeCreatorImpl2 extends SomeCreator {
   doAnythingWithProduct() {
+    // Herda do a instância por omissão
     const product = this.createSomeProduct();
     // faça alguma coisa a mais
     product.operation();
@@ -147,14 +157,7 @@ class SomeProduct2 extends SomeProduct {
   id = 2;
 }
 
-// --------------------------- CLIENT ----------------------------------
-
-const authByToken = new AuthCreatorByToken();
-authByToken.checkFeature("/", "abc"); // Versão extendida
-
-const authByApi = new AuthCreatorByApi(); // Fornece a instância adequada de product
-authByApi.checkFeature("/", "abc");
-
+// Client code
 const someCreator1 = new SomeCreatorImpl1();
 const someProduct1 = someCreator1.createSomeProduct(1); // Criador parametrizado
 const someProduct2 = someCreator1.createSomeProduct(2); // Criador parametrizado

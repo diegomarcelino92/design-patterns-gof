@@ -13,7 +13,7 @@ const authByToken = new AuthCreatorByToken();
 const authByApi = new AuthCreatorByApi();
 
 const clientCode1 = (auth: AuthCreator) => {
-  auth.checkFeature("/", "abc");
+  auth.checkFeature("USER_PATH_REQUEST", "USER_TOKEN");
 };
 
 clientCode1(authByApi);

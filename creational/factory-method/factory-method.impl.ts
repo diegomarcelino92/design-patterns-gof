@@ -13,7 +13,7 @@ export class AuthCreatorByToken extends AuthCreator {
   }
 
   checkFeature(path: string, token: string) {
-    // Gancho para subclasses, permitindo extender a versão abstrata do criado
+    // Gancho para subclasses, permitindo extender a versão abstrata do criador
     console.log("Extendi a implementação");
     return super.checkFeature(path, token);
   }

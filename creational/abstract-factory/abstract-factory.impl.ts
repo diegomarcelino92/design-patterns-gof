@@ -25,7 +25,7 @@ class Brand1Perfume implements IPerfume {
 }
 
 class Brand1Heath implements IHeath {
-  heathType: IHeath["heathType"] = "vatamin";
+  heathType: IHeath["heathType"] = "vitamin";
   nome = "Produto de saúde Brand1";
   price = 50;
   brand = "Brand1";
@@ -53,14 +53,14 @@ export class KitMultibrand implements IKitFactory {
 }
 
 class Brand2Perfume implements IPerfume {
-  fragancyType: "sweet" | "woody" = "woody";
+  fragancyType: IPerfume["fragancyType"] = "woody";
   nome: string = "Produto de perfume Brand2";
   price: number = 50;
   brand: string = "Brand2";
 }
 
 class Brand2Heath implements IHeath {
-  heathType: "vatamin" | "tea" = "tea";
+  heathType: IHeath["heathType"] = "tea";
   nome: string = "Produto de saúde Brand2";
   price: number = 50;
   brand: string = "Brand2";

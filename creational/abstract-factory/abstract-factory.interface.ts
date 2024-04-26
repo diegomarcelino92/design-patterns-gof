@@ -11,7 +11,7 @@ export interface IPerfume extends IBaseProduct {
 
 // AbstractProduct
 export interface IHeath extends IBaseProduct {
-  heathType: "vatamin" | "tea";
+  heathType: "vitamin" | "tea";
 }
 
 // AbstractProduct
